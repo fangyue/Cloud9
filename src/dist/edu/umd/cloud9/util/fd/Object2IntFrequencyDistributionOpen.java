@@ -256,7 +256,7 @@ public class Object2IntFrequencyDistributionOpen<K extends Comparable<K>>
       list.add(new PairOfObjectInt<K>(e.getKey(), e.getIntValue()));
     }
 
-    // sort the entries
+    // Sort the entries.
     Collections.sort(list, new Comparator<PairOfObjectInt<K>>() {
       public int compare(PairOfObjectInt<K> e1, PairOfObjectInt<K> e2) {
         if (e1.getLeftElement().equals(e2.getLeftElement())) {

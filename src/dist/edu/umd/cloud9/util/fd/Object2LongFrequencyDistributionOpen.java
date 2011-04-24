@@ -256,14 +256,14 @@ public class Object2LongFrequencyDistributionOpen<K extends Comparable<K>>
       list.add(new PairOfObjectLong<K>(e.getKey(), e.getLongValue()));
     }
 
-    // sort the entries
+    // Sort the entries.
     Collections.sort(list, new Comparator<PairOfObjectLong<K>>() {
       public int compare(PairOfObjectLong<K> e1, PairOfObjectLong<K> e2) {
         if (e1.getLeftElement().equals(e2.getLeftElement())) {
           throw new RuntimeException("Event observed twice!");
         }
 
-        return e1.getLeftElement().compareTo(e1.getLeftElement());
+        return e1.getLeftElement().compareTo(e2.getLeftElement());
       }
     });
 
