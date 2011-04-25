@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * <p>
- * This class provides a skeletal implementation of the <tt>MapKI</tt> interface, to minimize the
+ * This class provides a skeletal implementation of the <tt>MapII</tt> interface, to minimize the
  * effort required to implement this interface.
  * </p>
  *
@@ -32,31 +32,34 @@ import java.util.Set;
  *
  * <p>
  * The programmer should generally provide a void (no argument) and map constructor, as per the
- * recommendation in the <tt>MapKI</tt> interface specification.
+ * recommendation in the <tt>MapII</tt> interface specification.
  * </p>
  */
-public abstract class AbstractMapKI<K> implements MapKI<K> {
+public abstract class AbstractMapII implements MapII {
   public static int DEFAULT_VALUE = 0;
 
   /**
    * Sole constructor. (For invocation by subclass constructors, typically implicit.)
    */
-  protected AbstractMapKI() {}
+  protected AbstractMapII() {}
 
   // Query Operations
 
+  @Override
   public int size() {
     return entrySet().size();
   }
 
+  @Override
   public boolean isEmpty() {
     return size() == 0;
   }
 
+  @Override
   public boolean containsValue(int value) {
-    Iterator<Entry<K>> i = entrySet().iterator();
+    Iterator<Entry> i = entrySet().iterator();
     while (i.hasNext()) {
-      Entry<K> e = i.next();
+      Entry e = i.next();
       if (value == e.getValue())
         return true;
     }
@@ -64,41 +67,25 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
     return false;
   }
 
-  public boolean containsKey(K key) {
-    Iterator<Entry<K>> i = entrySet().iterator();
-    if (key == null) {
-      while (i.hasNext()) {
-        Entry<K> e = i.next();
-        if (e.getKey() == null) {
-          return true;
-        }
-      }
-    } else {
-      while (i.hasNext()) {
-        Entry<K> e = i.next();
-        if (key.equals(e.getKey())) {
-          return true;
-        }
+  @Override
+  public boolean containsKey(int key) {
+    Iterator<Entry> i = entrySet().iterator();
+    while (i.hasNext()) {
+      Entry e = i.next();
+      if (key == e.getKey()) {
+        return true;
       }
     }
     return false;
   }
 
-  public int get(K key) {
-    Iterator<Entry<K>> i = entrySet().iterator();
-    if (key == null) {
-      while (i.hasNext()) {
-        Entry<K> e = i.next();
-        if (e.getKey() == null) {
-          return e.getValue();
-        }
-      }
-    } else {
-      while (i.hasNext()) {
-        Entry<K> e = i.next();
-        if (key.equals(e.getKey())) {
-          return e.getValue();
-        }
+  @Override
+  public int get(int key) {
+    Iterator<Entry> i = entrySet().iterator();
+    while (i.hasNext()) {
+      Entry e = i.next();
+      if (key == e.getKey()) {
+        return e.getValue();
       }
     }
     return DEFAULT_VALUE;
@@ -106,26 +93,19 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
 
   // Modification Operations
 
-  public int put(K key, int value) {
+  @Override
+  public int put(int key, int value) {
     throw new UnsupportedOperationException();
   }
 
-  public int remove(K key) {
-    Iterator<Entry<K>> i = entrySet().iterator();
-    Entry<K> correctEntry = null;
-    if (key == null) {
-      while (correctEntry == null && i.hasNext()) {
-        Entry<K> e = i.next();
-        if (e.getKey() == null) {
-          correctEntry = e;
-        }
-      }
-    } else {
-      while (correctEntry == null && i.hasNext()) {
-        Entry<K> e = i.next();
-        if (key.equals(e.getKey())) {
-          correctEntry = e;
-        }
+  @Override
+  public int remove(int key) {
+    Iterator<Entry> i = entrySet().iterator();
+    Entry correctEntry = null;
+    while (correctEntry == null && i.hasNext()) {
+      Entry e = i.next();
+      if (key == e.getKey()) {
+        correctEntry = e;
       }
     }
 
@@ -139,11 +119,13 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
 
   // Bulk Operations
 
-  public void putAll(MapKI<? extends K> m) {
-    for (Entry<? extends K> e : m.entrySet())
+  @Override
+  public void putAll(MapII m) {
+    for (MapII.Entry e : m.entrySet())
       put(e.getKey(), e.getValue());
   }
 
+  @Override
   public void clear() {
     entrySet().clear();
   }
@@ -155,21 +137,22 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
    * time this view is requested. The views are stateless, so there's no reason to create more than
    * one of each.
    */
-  transient volatile Set<K> keySet = null;
+  transient volatile Set<Integer> keySet = null;
   transient volatile Collection<Integer> values = null;
 
-  public Set<K> keySet() {
+  @Override
+  public Set<Integer> keySet() {
     if (keySet == null) {
-      keySet = new AbstractSet<K>() {
-        public Iterator<K> iterator() {
-          return new Iterator<K>() {
-            private Iterator<Entry<K>> i = entrySet().iterator();
+      keySet = new AbstractSet<Integer>() {
+        public Iterator<Integer> iterator() {
+          return new Iterator<Integer>() {
+            private Iterator<Entry> i = entrySet().iterator();
 
             public boolean hasNext() {
               return i.hasNext();
             }
 
-            public K next() {
+            public Integer next() {
               return i.next().getKey();
             }
 
@@ -180,24 +163,24 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
         }
 
         public int size() {
-          return AbstractMapKI.this.size();
+          return AbstractMapII.this.size();
         }
 
-        @SuppressWarnings("unchecked")
         public boolean contains(Object k) {
-          return AbstractMapKI.this.containsKey((K) k);
+          return AbstractMapII.this.containsKey((Integer) k);
         }
       };
     }
     return keySet;
   }
 
+  @Override
   public Collection<Integer> values() {
     if (values == null) {
       values = new AbstractCollection<Integer>() {
         public Iterator<Integer> iterator() {
           return new Iterator<Integer>() {
-            private Iterator<Entry<K>> i = entrySet().iterator();
+            private Iterator<Entry> i = entrySet().iterator();
 
             public boolean hasNext() {
               return i.hasNext();
@@ -214,40 +197,40 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
         }
 
         public int size() {
-          return AbstractMapKI.this.size();
+          return AbstractMapII.this.size();
         }
 
         public boolean contains(Object v) {
-          return AbstractMapKI.this.containsValue((Integer) v);
+          return AbstractMapII.this.containsValue((Integer) v);
         }
       };
     }
     return values;
   }
 
-  public abstract Set<Entry<K>> entrySet();
+  public abstract Set<Entry> entrySet();
 
   // Comparison and hashing
 
-  @SuppressWarnings("unchecked")
+  @Override
   public boolean equals(Object o) {
     if (o == this)
       return true;
 
-    if (!(o instanceof MapKI)) {
+    if (!(o instanceof MapII)) {
       return false;
     }
 
-    MapKI<K> m = (MapKI<K>) o;
+    MapII m = (MapII) o;
     if (m.size() != size()) {
       return false;
     }
 
     try {
-      Iterator<Entry<K>> i = entrySet().iterator();
+      Iterator<Entry> i = entrySet().iterator();
       while (i.hasNext()) {
-        Entry<K> e = i.next();
-        K key = e.getKey();
+        Entry e = i.next();
+        int key = e.getKey();
         int value = e.getValue();
         if (value != m.get(key)) {
           return false;
@@ -262,17 +245,19 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
     return true;
   }
 
+  @Override
   public int hashCode() {
     int h = 0;
-    Iterator<Entry<K>> i = entrySet().iterator();
+    Iterator<Entry> i = entrySet().iterator();
     while (i.hasNext()) {
       h += i.next().hashCode();
     }
     return h;
   }
 
+  @Override
   public String toString() {
-    Iterator<Entry<K>> i = entrySet().iterator();
+    Iterator<Entry> i = entrySet().iterator();
     if (!i.hasNext()) {
       return "{}";
     }
@@ -280,10 +265,10 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
     StringBuilder sb = new StringBuilder();
     sb.append('{');
     for (;;) {
-      Entry<K> e = i.next();
-      K key = e.getKey();
+      Entry e = i.next();
+      int key = e.getKey();
       int value = e.getValue();
-      sb.append(key == this ? "(this Map)" : key);
+      sb.append(key);
       sb.append('=');
       sb.append(value);
       if (!i.hasNext())
@@ -292,16 +277,11 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
     }
   }
 
-  @SuppressWarnings("unchecked")
   protected Object clone() throws CloneNotSupportedException {
-    AbstractMapKI<K> result = (AbstractMapKI<K>) super.clone();
+    AbstractMapII result = (AbstractMapII) super.clone();
     result.keySet = null;
     result.values = null;
     return result;
-  }
-
-  private static boolean eq(Object o1, Object o2) {
-    return o1 == null ? o2 == null : o1.equals(o2);
   }
 
   // Implementation Note: SimpleEntry and SimpleImmutableEntry are distinct unrelated classes, even
@@ -315,49 +295,54 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
    * it may be convenient to return arrays of <tt>SimpleEntry</tt> instances in method
    * <tt>entrySet().toArray</tt>.
    */
-  public static class SimpleEntry<K> implements Entry<K>, Serializable {
-    private static final long serialVersionUID = -6560229993033595828L;
+  public static class SimpleEntry implements Entry, Serializable {
+    private static final long serialVersionUID = 5527510751453323102L;
 
-    private final K key;
+    private final int key;
     private int value;
 
-    public SimpleEntry(K key, int value) {
+    public SimpleEntry(int key, int value) {
       this.key = key;
       this.value = value;
     }
 
-    public SimpleEntry(Entry<? extends K> entry) {
+    public SimpleEntry(Entry entry) {
       this.key = entry.getKey();
       this.value = entry.getValue();
     }
 
-    public K getKey() {
+    @Override
+    public int getKey() {
       return key;
     }
 
+    @Override
     public int getValue() {
       return value;
     }
 
+    @Override
     public int setValue(int value) {
       int oldValue = this.value;
       this.value = value;
       return oldValue;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public boolean equals(Object o) {
-      if (!(o instanceof Entry)) {
+      if (!(o instanceof MapII.Entry)) {
         return false;
       }
       Entry e = (Entry) o;
-      return eq(key, e.getKey()) && value == e.getValue();
+      return key == e.getKey() && value == e.getValue();
     }
 
+    @Override
     public int hashCode() {
-      return (key == null ? 0 : key.hashCode()) ^ value;
+      return key ^ value;
     }
 
+    @Override
     public String toString() {
       return key + "=" + value;
     }
@@ -368,47 +353,52 @@ public abstract class AbstractMapKI<K> implements MapKI<K> {
    * <tt>setValue</tt>. This class may be convenient in methods that return thread-safe snapshots of
    * key-value mappings.
    */
-  public static class SimpleImmutableEntry<K> implements Entry<K>, Serializable {
-    private static final long serialVersionUID = 5850113248055442458L;
+  public static class SimpleImmutableEntry implements Entry, Serializable {
+    private static final long serialVersionUID = 7043182153810505751L;
 
-    private final K key;
+    private final int key;
     private final int value;
 
-    public SimpleImmutableEntry(K key, int value) {
+    public SimpleImmutableEntry(int key, int value) {
       this.key = key;
       this.value = value;
     }
 
-    public SimpleImmutableEntry(Entry<? extends K> entry) {
+    public SimpleImmutableEntry(Entry entry) {
       this.key = entry.getKey();
       this.value = entry.getValue();
     }
 
-    public K getKey() {
+    @Override
+    public int getKey() {
       return key;
     }
 
+    @Override
     public int getValue() {
       return value;
     }
 
+    @Override
     public int setValue(int value) {
       throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
-      if (!(o instanceof Entry)) {
+      if (!(o instanceof MapKI.Entry)) {
         return false;
       }
       Entry e = (Entry) o;
-      return eq(key, e.getKey()) && value == e.getValue();
+      return key == e.getKey() && value == e.getValue();
     }
 
+    @Override
     public int hashCode() {
-      return (key == null ? 0 : key.hashCode()) ^ value;
+      return key ^ value;
     }
 
+    @Override
     public String toString() {
       return key + "=" + value;
     }

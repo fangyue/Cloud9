@@ -223,22 +223,22 @@ public class HMapIF implements MapIF, Cloneable, Serializable {
 	}
 
 	// doc copied from interface
-	public void put(int key, float value) {
+	public float put(int key, float value) {
 		int hash = hash(key);
 		int i = indexFor(hash, table.length);
 		for (Entry e = table[i]; e != null; e = e.next) {
 			int k;
 			if (e.hash == hash && ((k = e.key) == key || key == k)) {
-				// int oldValue = e.value;
+			  float oldValue = e.value;
 				e.value = value;
 				e.recordAccess(this);
-				return; // oldValue;
+				return oldValue;
 			}
 		}
 
 		modCount++;
 		addEntry(hash, key, value, i);
-		// return null;
+		return 0.0f;
 	}
 
 	/**
