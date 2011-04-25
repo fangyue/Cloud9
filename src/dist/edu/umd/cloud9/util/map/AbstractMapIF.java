@@ -36,8 +36,6 @@ import java.util.Set;
  * </p>
  */
 public abstract class AbstractMapIF implements MapIF {
-  public static float DEFAULT_VALUE = 0.0f;
-
   /**
    * Sole constructor. (For invocation by subclass constructors, typically implicit.)
    */

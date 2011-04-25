@@ -200,7 +200,7 @@ public class HMapIF implements MapIF, Cloneable, Serializable {
 				return e.value;
 		}
 
-		throw new NoSuchElementException();
+		return DEFAULT_VALUE;
 	}
 
 	// doc copied from interface
@@ -229,7 +229,7 @@ public class HMapIF implements MapIF, Cloneable, Serializable {
 		for (Entry e = table[i]; e != null; e = e.next) {
 			int k;
 			if (e.hash == hash && ((k = e.key) == key || key == k)) {
-			  float oldValue = e.value;
+				float oldValue = e.value;
 				e.value = value;
 				e.recordAccess(this);
 				return oldValue;
@@ -238,7 +238,7 @@ public class HMapIF implements MapIF, Cloneable, Serializable {
 
 		modCount++;
 		addEntry(hash, key, value, i);
-		return 0.0f;
+		return DEFAULT_VALUE;
 	}
 
 	/**

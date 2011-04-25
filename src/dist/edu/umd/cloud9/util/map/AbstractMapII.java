@@ -36,8 +36,6 @@ import java.util.Set;
  * </p>
  */
 public abstract class AbstractMapII implements MapII {
-  public static int DEFAULT_VALUE = 0;
-
   /**
    * Sole constructor. (For invocation by subclass constructors, typically implicit.)
    */

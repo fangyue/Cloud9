@@ -36,8 +36,6 @@ import java.util.Set;
  * </p>
  */
 public abstract class AbstractMapKF<K> implements MapKF<K> {
-  public static int DEFAULT_VALUE = 0;
-
   /**
    * Sole constructor. (For invocation by subclass constructors, typically implicit.)
    */
@@ -112,7 +110,7 @@ public abstract class AbstractMapKF<K> implements MapKF<K> {
   // Modification Operations
 
   @Override
-  public void put(K key, float value) {
+  public float put(K key, float value) {
     throw new UnsupportedOperationException();
   }
 

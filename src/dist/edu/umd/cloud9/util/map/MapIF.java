@@ -16,6 +16,7 @@ import java.util.Set;
  * Map from ints to floats.
  */
 public interface MapIF {
+  public static final float DEFAULT_VALUE = 0.0f;
 	// Query Operations
 
 	/**
