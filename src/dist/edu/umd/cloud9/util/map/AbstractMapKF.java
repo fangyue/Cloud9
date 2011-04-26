@@ -326,7 +326,7 @@ public abstract class AbstractMapKF<K> implements MapKF<K> {
    * <tt>entrySet().toArray</tt>.
    */
   public static class SimpleEntry<K> implements Entry<K>, Serializable {
-    private static final long serialVersionUID = -6560229993033595828L;
+    private static final long serialVersionUID = 1523603063178205446L;
 
     private final K key;
     private float value;

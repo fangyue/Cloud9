@@ -119,8 +119,9 @@ public abstract class AbstractMapIF implements MapIF {
 
   @Override
   public void putAll(MapIF m) {
-    for (MapIF.Entry e : m.entrySet())
+    for (MapIF.Entry e : m.entrySet()) {
       put(e.getKey(), e.getValue());
+    }
   }
 
   @Override
@@ -382,9 +383,9 @@ public abstract class AbstractMapIF implements MapIF {
       throw new UnsupportedOperationException();
     }
 
-    @Override @SuppressWarnings("unchecked")
+    @Override
     public boolean equals(Object o) {
-      if (!(o instanceof MapKF.Entry)) {
+      if (!(o instanceof MapIF.Entry)) {
         return false;
       }
       Entry e = (Entry) o;

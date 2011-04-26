@@ -4,14 +4,12 @@ package edu.umd.cloud9.util.map;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 
 /**
- * A {@link Map} that further provides a <i>total ordering</i> on its keys. The map is ordered
+ * A {@link MapKI} that further provides a <i>total ordering</i> on its keys. The map is ordered
  * according to the {@linkplain Comparable natural ordering} of its keys, or by a {@link Comparator}
  * typically provided at sorted map creation time. This order is reflected when iterating over the
  * sorted map's collection views (returned by the <tt>entrySet</tt>, <tt>keySet</tt> and
@@ -58,7 +56,7 @@ import java.util.TreeMap;
  * mappings in <tt>m</tt> whose keys are between <tt>low</tt> and <tt>high</tt>, inclusive:
  * 
  * <pre>
- * SortedMap&lt;String, V&gt; sub = m.subMap(low, high + &quot;\0&quot;);
+ * SortedMapKI&lt;String&gt; sub = m.subMap(low, high + &quot;\0&quot;);
  * </pre>
  * 
  * A similar technique can be used to generate an <i>open range</i> (which contains neither
@@ -66,35 +64,15 @@ import java.util.TreeMap;
  * <tt>m</tt> whose keys are between <tt>low</tt> and <tt>high</tt>, exclusive:
  * 
  * <pre>
- * SortedMap&lt;String, V&gt; sub = m.subMap(low + &quot;\0&quot;, high);
+ * SortedMapKI&lt;String&gt; sub = m.subMap(low + &quot;\0&quot;, high);
  * </pre>
- * 
- * <p>
- * This interface is a member of the <a href="{@docRoot}
- * /../technotes/guides/collections/index.html"> Java Collections Framework</a>.
- * 
- * @param <K>
- *          the type of keys maintained by this map
- * @param <V>
- *          the type of mapped values
- * 
- * @author Josh Bloch
- * @version %I%, %G%
- * @see Map
- * @see TreeMap
- * @see SortedSet
- * @see Comparator
- * @see Comparable
- * @see Collection
- * @see ClassCastException
- * @since 1.2
  */
 
 public interface SortedMapKI<K> extends MapKI<K> {
   /**
    * Returns the comparator used to order the keys in this map, or <tt>null</tt> if this map uses
    * the {@linkplain Comparable natural ordering} of its keys.
-   * 
+   *
    * @return the comparator used to order the keys in this map, or <tt>null</tt> if this map uses
    *         the natural ordering of its keys
    */
@@ -106,15 +84,13 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * is empty.) The returned map is backed by this map, so changes in the returned map are reflected
    * in this map, and vice-versa. The returned map supports all optional map operations that this
    * map supports.
-   * 
+   *
    * <p>
    * The returned map will throw an <tt>IllegalArgumentException</tt> on an attempt to insert a key
    * outside its range.
-   * 
-   * @param fromKey
-   *          low endpoint (inclusive) of the keys in the returned map
-   * @param toKey
-   *          high endpoint (exclusive) of the keys in the returned map
+   *
+   * @param fromKey low endpoint (inclusive) of the keys in the returned map
+   * @param toKey high endpoint (exclusive) of the keys in the returned map
    * @return a view of the portion of this map whose keys range from <tt>fromKey</tt>, inclusive, to
    *         <tt>toKey</tt>, exclusive
    * @throws ClassCastException
@@ -125,9 +101,8 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * @throws NullPointerException
    *           if <tt>fromKey</tt> or <tt>toKey</tt> is null and this map does not permit null keys
    * @throws IllegalArgumentException
-   *           if <tt>fromKey</tt> is greater than <tt>toKey</tt>; or if this map itself has a
-   *           restricted range, and <tt>fromKey</tt> or <tt>toKey</tt> lies outside the bounds of
-   *           the range
+   *           if <tt>fromKey</tt> is greater than <tt>toKey</tt>; or if this map itself has a restricted
+   *           range, and <tt>fromKey</tt> or <tt>toKey</tt> lies outside the bounds of the range
    */
   SortedMapKI<K> subMap(K fromKey, K toKey);
 
@@ -135,13 +110,12 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * Returns a view of the portion of this map whose keys are strictly less than <tt>toKey</tt>. The
    * returned map is backed by this map, so changes in the returned map are reflected in this map,
    * and vice-versa. The returned map supports all optional map operations that this map supports.
-   * 
+   *
    * <p>
    * The returned map will throw an <tt>IllegalArgumentException</tt> on an attempt to insert a key
    * outside its range.
-   * 
-   * @param toKey
-   *          high endpoint (exclusive) of the keys in the returned map
+   *
+   * @param toKey high endpoint (exclusive) of the keys in the returned map
    * @return a view of the portion of this map whose keys are strictly less than <tt>toKey</tt>
    * @throws ClassCastException
    *           if <tt>toKey</tt> is not compatible with this map's comparator (or, if the map has no
@@ -161,15 +135,13 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * <tt>fromKey</tt>. The returned map is backed by this map, so changes in the returned map are
    * reflected in this map, and vice-versa. The returned map supports all optional map operations
    * that this map supports.
-   * 
+   *
    * <p>
    * The returned map will throw an <tt>IllegalArgumentException</tt> on an attempt to insert a key
    * outside its range.
-   * 
-   * @param fromKey
-   *          low endpoint (inclusive) of the keys in the returned map
-   * @return a view of the portion of this map whose keys are greater than or equal to
-   *         <tt>fromKey</tt>
+   *
+   * @param fromKey low endpoint (inclusive) of the keys in the returned map
+   * @return a view of the portion of this map whose keys are greater than or equal to <tt>fromKey</tt>
    * @throws ClassCastException
    *           if <tt>fromKey</tt> is not compatible with this map's comparator (or, if the map has
    *           no comparator, if <tt>fromKey</tt> does not implement {@link Comparable}).
@@ -185,19 +157,17 @@ public interface SortedMapKI<K> extends MapKI<K> {
 
   /**
    * Returns the first (lowest) key currently in this map.
-   * 
+   *
    * @return the first (lowest) key currently in this map
-   * @throws NoSuchElementException
-   *           if this map is empty
+   * @throws NoSuchElementException if this map is empty
    */
   K firstKey();
 
   /**
    * Returns the last (highest) key currently in this map.
-   * 
+   *
    * @return the last (highest) key currently in this map
-   * @throws NoSuchElementException
-   *           if this map is empty
+   * @throws NoSuchElementException if this map is empty
    */
   K lastKey();
 
@@ -210,7 +180,7 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * map, via the <tt>Iterator.remove</tt>, <tt>Set.remove</tt>, <tt>removeAll</tt>,
    * <tt>retainAll</tt>, and <tt>clear</tt> operations. It does not support the <tt>add</tt> or
    * <tt>addAll</tt> operations.
-   * 
+   *
    * @return a set view of the keys contained in this map, sorted in ascending order
    */
   Set<K> keySet();
@@ -225,7 +195,7 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * the <tt>Iterator.remove</tt>, <tt>Collection.remove</tt>, <tt>removeAll</tt>,
    * <tt>retainAll</tt> and <tt>clear</tt> operations. It does not support the <tt>add</tt> or
    * <tt>addAll</tt> operations.
-   * 
+   *
    * @return a collection view of the values contained in this map, sorted in ascending key order
    */
   Collection<Integer> values();
@@ -240,7 +210,7 @@ public interface SortedMapKI<K> extends MapKI<K> {
    * mapping from the map, via the <tt>Iterator.remove</tt>, <tt>Set.remove</tt>, <tt>removeAll</tt>
    * , <tt>retainAll</tt> and <tt>clear</tt> operations. It does not support the <tt>add</tt> or
    * <tt>addAll</tt> operations.
-   * 
+   *
    * @return a set view of the mappings contained in this map, sorted in ascending key order
    */
   Set<MapKI.Entry<K>> entrySet();

@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Hash-based implementation of {@link MapII}.
  */
-public class HMapII implements MapII, Cloneable, Serializable {
+public class HMapII extends AbstractMapII implements MapII, Cloneable, Serializable {
 
 	/**
 	 * The default initial capacity - MUST be a power of two.

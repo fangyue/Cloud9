@@ -291,10 +291,11 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    *           if the specified map is null or the specified map contains a null key and this map
    *           does not permit null keys
    */
+  @SuppressWarnings("unchecked")
   public void putAll(MapKI<? extends K> map) {
     int mapSize = map.size();
     if (size == 0 && mapSize != 0 && map instanceof SortedMapKI) {
-      Comparator c = ((SortedMapKI) map).comparator();
+      Comparator<? extends K> c = ((SortedMapKI) map).comparator();
       if (c == comparator || (c != null && c.equals(comparator))) {
         ++modCount;
         try {
@@ -324,8 +325,9 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    *           if the specified key is null and this map uses natural ordering, or its comparator
    *           does not permit null keys
    */
+  @SuppressWarnings("unchecked")
   final Entry<K> getEntry(K key) {
-    // Offload comparator-based version for sake of performance
+    // Offload comparator-based version for sake of performance.
     if (comparator != null)
       return getEntryUsingComparator(key);
     if (key == null)
@@ -334,12 +336,13 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
     Entry<K> p = root;
     while (p != null) {
       int cmp = k.compareTo(p.key);
-      if (cmp < 0)
+      if (cmp < 0) {
         p = p.left;
-      else if (cmp > 0)
+      } else if (cmp > 0) {
         p = p.right;
-      else
+      } else {
         return p;
+      }
     }
     return null;
   }
@@ -349,19 +352,19 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    * worth doing for most methods, that are less dependent on comparator performance, but is
    * worthwhile here.)
    */
-  final Entry<K> getEntryUsingComparator(Object key) {
-    K k = (K) key;
+  final Entry<K> getEntryUsingComparator(K k) {
     Comparator<? super K> cpr = comparator;
     if (cpr != null) {
       Entry<K> p = root;
       while (p != null) {
         int cmp = cpr.compare(k, p.key);
-        if (cmp < 0)
+        if (cmp < 0) {
           p = p.left;
-        else if (cmp > 0)
+        } else if (cmp > 0) {
           p = p.right;
-        else
+        } else {
           return p;
+        }
       }
     }
     return null;
@@ -541,8 +544,9 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
         }
       } while (t != null);
     } else {
-      if (key == null)
+      if (key == null) {
         throw new NullPointerException();
+      }
       Comparable<? super K> k = (Comparable<? super K>) key;
       do {
         parent = t;
@@ -569,9 +573,8 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
 
   /**
    * Removes the mapping for this key from this TMap if present.
-   * 
-   * @param key
-   *          key for which mapping should be removed
+   *
+   * @param key key for which mapping should be removed
    * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no
    *         mapping for <tt>key</tt>. (A <tt>null</tt> return can also indicate that the map
    *         previously associated <tt>null</tt> with <tt>key</tt>.)
@@ -845,8 +848,8 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    */
   public NavigableMapKI<K> descendingMap() {
     NavigableMapKI<K> km = descendingMap;
-    return (km != null) ? km : (descendingMap = new DescendingSubMapKI(this, true, null, true,
-        true, null, true));
+    return (km != null) ? km :
+      (descendingMap = new DescendingSubMapKI<K>(this, true, null, true, true, null, true));
   }
 
   /**
@@ -860,7 +863,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    * @since 1.6
    */
   public NavigableMapKI<K> subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive) {
-    return new AscendingSubMapKI(this, false, fromKey, fromInclusive, false, toKey, toInclusive);
+    return new AscendingSubMapKI<K>(this, false, fromKey, fromInclusive, false, toKey, toInclusive);
   }
 
   /**
@@ -874,7 +877,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    * @since 1.6
    */
   public NavigableMapKI<K> headMap(K toKey, boolean inclusive) {
-    return new AscendingSubMapKI(this, true, null, true, false, toKey, inclusive);
+    return new AscendingSubMapKI<K>(this, true, null, true, false, toKey, inclusive);
   }
 
   /**
@@ -888,7 +891,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    * @since 1.6
    */
   public NavigableMapKI<K> tailMap(K fromKey, boolean inclusive) {
-    return new AscendingSubMapKI(this, false, fromKey, inclusive, true, null, true);
+    return new AscendingSubMapKI<K>(this, false, fromKey, inclusive, true, null, true);
   }
 
   /**
@@ -965,18 +968,22 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       return new EntryIterator(getFirstEntry());
     }
 
+    @SuppressWarnings("unchecked")
     public boolean contains(Object o) {
-      if (!(o instanceof MapKI.Entry))
+      if (!(o instanceof MapKI.Entry)) {
         return false;
+      }
       MapKI.Entry<K> entry = (MapKI.Entry<K>) o;
       int value = entry.getValue();
       Entry<K> p = getEntry(entry.getKey());
       return p != null && valEquals(p.getValue(), value);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean remove(Object o) {
-      if (!(o instanceof MapKI.Entry))
+      if (!(o instanceof MapKI.Entry)) {
         return false;
+      }
       MapKI.Entry<K> entry = (MapKI.Entry<K>) o;
       int value = entry.getValue();
       Entry<K> p = getEntry(entry.getKey());
@@ -1017,91 +1024,66 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       m = map;
     }
 
+    @Override @SuppressWarnings("unchecked")
     public Iterator<E> iterator() {
-      if (m instanceof TMapKI)
+      if (m instanceof TMapKI) {
         return ((TMapKI<E>) m).keyIterator();
-      else
+      } else {
         return (Iterator<E>) (((TMapKI.NavigableSubMapKI) m).keyIterator());
+      }
     }
 
+    @Override @SuppressWarnings("unchecked")
     public Iterator<E> descendingIterator() {
-      if (m instanceof TMapKI)
+      if (m instanceof TMapKI) {
         return ((TMapKI<E>) m).descendingKeyIterator();
-      else
+      } else {
         return (Iterator<E>) (((TMapKI.NavigableSubMapKI) m).descendingKeyIterator());
+      }
     }
 
-    public int size() {
-      return m.size();
-    }
+    @Override @SuppressWarnings("unchecked") public boolean contains(Object o) { return m.containsKey((E) o); }
+    @Override public int size() { return m.size(); }
+    @Override public boolean isEmpty() { return m.isEmpty(); }
+    @Override public void clear() { m.clear(); }
+    @Override public E lower(E e) { return m.lowerKey(e); }
+    @Override public E floor(E e) { return m.floorKey(e); }
+    @Override public E ceiling(E e) { return m.ceilingKey(e); }
+    @Override public E higher(E e) { return m.higherKey(e); }
+    @Override public E first() { return m.firstKey(); }
+    @Override public E last() { return m.lastKey(); }
+    @Override public Comparator<? super E> comparator() { return m.comparator(); }
 
-    public boolean isEmpty() {
-      return m.isEmpty();
-    }
-
-    public boolean contains(Object o) {
-      return m.containsKey((E) o);
-    }
-
-    public void clear() {
-      m.clear();
-    }
-
-    public E lower(E e) {
-      return m.lowerKey(e);
-    }
-
-    public E floor(E e) {
-      return m.floorKey(e);
-    }
-
-    public E ceiling(E e) {
-      return m.ceilingKey(e);
-    }
-
-    public E higher(E e) {
-      return m.higherKey(e);
-    }
-
-    public E first() {
-      return m.firstKey();
-    }
-
-    public E last() {
-      return m.lastKey();
-    }
-
-    public Comparator<? super E> comparator() {
-      return m.comparator();
-    }
-
+    @Override
     public E pollFirst() {
       MapKI.Entry<E> e = m.pollFirstEntry();
       return e == null ? null : e.getKey();
     }
 
+    @Override
     public E pollLast() {
       MapKI.Entry<E> e = m.pollLastEntry();
       return e == null ? null : e.getKey();
     }
 
+    @Override @SuppressWarnings("unchecked")
     public boolean remove(Object o) {
       int oldSize = size();
       m.remove((E) o);
       return size() != oldSize;
     }
 
-    public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement,
-        boolean toInclusive) {
+    @Override
+    public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
       TreeSet<E> set = new TreeSet<E>();
 
-      for (MapKI.Entry<E> e : m.subMap(fromElement, fromInclusive, toElement, toInclusive)
-          .entrySet()) {
+      for (MapKI.Entry<E> e : m.subMap(fromElement, fromInclusive, toElement, toInclusive).entrySet()) {
         set.add(e.getKey());
       }
       return set;
     }
 
+    @Override
     public NavigableSet<E> headSet(E toElement, boolean inclusive) {
       TreeSet<E> set = new TreeSet<E>();
 
@@ -1111,6 +1093,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       return set;
     }
 
+    @Override
     public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
       TreeSet<E> set = new TreeSet<E>();
 
@@ -1120,18 +1103,22 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       return set;
     }
 
+    @Override
     public SortedSet<E> subSet(E fromElement, E toElement) {
       return subSet(fromElement, true, toElement, false);
     }
 
+    @Override
     public SortedSet<E> headSet(E toElement) {
       return headSet(toElement, false);
     }
 
+    @Override
     public SortedSet<E> tailSet(E fromElement) {
       return tailSet(fromElement, true);
     }
 
+    @Override
     public NavigableSet<E> descendingSet() {
       TreeSet<E> set = new TreeSet<E>();
 
@@ -1143,7 +1130,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
   }
 
   /**
-   * Base class for TMap Iterators
+   * Base class for TMapKI Iterators
    */
   abstract class PrivateEntryIterator<T> implements Iterator<T> {
     Entry<K> next;
@@ -1156,16 +1143,19 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       next = first;
     }
 
+    @Override
     public final boolean hasNext() {
       return next != null;
     }
 
     final Entry<K> nextEntry() {
       Entry<K> e = next;
-      if (e == null)
+      if (e == null) {
         throw new NoSuchElementException();
-      if (modCount != expectedModCount)
+      }
+      if (modCount != expectedModCount) {
         throw new ConcurrentModificationException();
+      }
       next = successor(e);
       lastReturned = e;
       return e;
@@ -1173,23 +1163,29 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
 
     final Entry<K> prevEntry() {
       Entry<K> e = next;
-      if (e == null)
+      if (e == null) {
         throw new NoSuchElementException();
-      if (modCount != expectedModCount)
+      }
+      if (modCount != expectedModCount) {
         throw new ConcurrentModificationException();
+      }
       next = predecessor(e);
       lastReturned = e;
       return e;
     }
 
+    @Override
     public void remove() {
-      if (lastReturned == null)
+      if (lastReturned == null) {
         throw new IllegalStateException();
-      if (modCount != expectedModCount)
+      }
+      if (modCount != expectedModCount) {
         throw new ConcurrentModificationException();
+      }
       // deleted entries are replaced by their successors
-      if (lastReturned.left != null && lastReturned.right != null)
+      if (lastReturned.left != null && lastReturned.right != null) {
         next = lastReturned;
+      }
       deleteEntry(lastReturned);
       expectedModCount = modCount;
       lastReturned = null;
@@ -1201,6 +1197,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       super(first);
     }
 
+    @Override
     public MapKI.Entry<K> next() {
       return nextEntry();
     }
@@ -1211,6 +1208,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       super(first);
     }
 
+    @Override
     public Integer next() {
       return nextEntry().value;
     }
@@ -1221,6 +1219,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       super(first);
     }
 
+    @Override
     public K next() {
       return nextEntry().key;
     }
@@ -1231,6 +1230,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       super(first);
     }
 
+    @Override
     public K next() {
       return prevEntry().key;
     }
@@ -1241,6 +1241,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
   /**
    * Compares two keys using the correct comparison method for this TMap.
    */
+  @SuppressWarnings("unchecked")
   final int compare(Object k1, Object k2) {
     return comparator == null ? ((Comparable<? super K>) k1).compareTo((K) k2) : comparator
         .compare((K) k1, (K) k2);
@@ -1288,9 +1289,9 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    */
   static abstract class NavigableSubMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>,
       Serializable {
-    /**
-     * The backing map.
-     */
+    private static final long serialVersionUID = -6456145503079362221L;
+
+    // The backing map.
     final TMapKI<K> m;
     transient volatile Collection<Integer> values = null;
 
@@ -1357,96 +1358,51 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
       return inclusive ? inRange(key) : inClosedRange(key);
     }
 
-    // public void clear() {
-    // entrySet().clear();
-    // }
-    //
-    // public void putAll(MapKI<? extends K> m) {
-    // for (MapKI.Entry<? extends K> e : m.entrySet())
-    // put(e.getKey(), e.getValue());
-    // }
-    //
-    // public Collection<Integer> values() {
-    // if (values == null) {
-    // values = new AbstractCollection<Integer>() {
-    // public Iterator<Integer> iterator() {
-    // return new Iterator<Integer>() {
-    // private Iterator<Entry<K>> i = entrySet().iterator();
-    //
-    // public boolean hasNext() {
-    // return i.hasNext();
-    // }
-    //
-    // public Integer next() {
-    // return i.next().getValue();
-    // }
-    //
-    // public void remove() {
-    // i.remove();
-    // }
-    // };
-    // }
-    //
-    // public int size() {
-    // return entrySet().size();
-    // }
-    //
-    // public boolean contains(Object v) {
-    // Iterator<Entry<K>> i = entrySet().iterator();
-    //
-    // while (i.hasNext()) {
-    // Entry<K> e = i.next();
-    // if (v.equals(e.getValue()))
-    // return true;
-    // }
-    // return false;
-    // }
-    // };
-    // }
-    // return values;
-    // }
-
     /*
      * Absolute versions of relation operations. Subclasses map to these using like-named "sub"
      * versions that invert senses for descending maps
      */
 
     final TMapKI.Entry<K> absLowest() {
-      TMapKI.Entry<K> e = (fromStart ? m.getFirstEntry() : (loInclusive ? m.getCeilingEntry(lo) : m
-          .getHigherEntry(lo)));
+      TMapKI.Entry<K> e = (fromStart ? m.getFirstEntry() :
+        (loInclusive ? m.getCeilingEntry(lo) : m.getHigherEntry(lo)));
       return (e == null || tooHigh(e.key)) ? null : e;
     }
 
     final TMapKI.Entry<K> absHighest() {
-      TMapKI.Entry<K> e = (toEnd ? m.getLastEntry() : (hiInclusive ? m.getFloorEntry(hi) : m
-          .getLowerEntry(hi)));
+      TMapKI.Entry<K> e = (toEnd ? m.getLastEntry() :
+        (hiInclusive ? m.getFloorEntry(hi) : m.getLowerEntry(hi)));
       return (e == null || tooLow(e.key)) ? null : e;
     }
 
     final TMapKI.Entry<K> absCeiling(K key) {
-      if (tooLow(key))
+      if (tooLow(key)) {
         return absLowest();
+      }
       TMapKI.Entry<K> e = m.getCeilingEntry(key);
       return (e == null || tooHigh(e.key)) ? null : e;
     }
 
     final TMapKI.Entry<K> absHigher(K key) {
-      if (tooLow(key))
+      if (tooLow(key)) {
         return absLowest();
+      }
       TMapKI.Entry<K> e = m.getHigherEntry(key);
       return (e == null || tooHigh(e.key)) ? null : e;
     }
 
     final TMapKI.Entry<K> absFloor(K key) {
-      if (tooHigh(key))
+      if (tooHigh(key)) {
         return absHighest();
+      }
       TMapKI.Entry<K> e = m.getFloorEntry(key);
       return (e == null || tooLow(e.key)) ? null : e;
     }
 
     final TMapKI.Entry<K> absLower(K key) {
-      if (tooHigh(key))
+      if (tooHigh(key)) {
         return absHighest();
+      }
       TMapKI.Entry<K> e = m.getLowerEntry(key);
       return (e == null || tooLow(e.key)) ? null : e;
     }
@@ -1581,7 +1537,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
 
     public final NavigableSet<K> navigableKeySet() {
       KeySet<K> nksv = navigableKeySetView;
-      return (nksv != null) ? nksv : (navigableKeySetView = new TMapKI.KeySet(this));
+      return (nksv != null) ? nksv : (navigableKeySetView = new TMapKI.KeySet<K>(this));
     }
 
     public final Set<K> keySet() {
@@ -1615,7 +1571,7 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
         if (size == -1 || sizeModCount != m.modCount) {
           sizeModCount = m.modCount;
           size = 0;
-          Iterator i = iterator();
+          Iterator<MapKI.Entry<K>> i = iterator();
           while (i.hasNext()) {
             size++;
             i.next();
@@ -1634,9 +1590,10 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
           return false;
         MapKI.Entry<K> entry = (MapKI.Entry<K>) o;
         K key = entry.getKey();
-        if (!inRange(key))
+        if (!inRange(key)) {
           return false;
-        TMapKI.Entry node = m.getEntry(key);
+        }
+        TMapKI.Entry<K> node = m.getEntry(key);
         return node != null && valEquals(node.getValue(), entry.getValue());
       }
 
@@ -2451,13 +2408,10 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    * parameters have identical definitions. Additional parameters are documented below. It is
    * assumed that the comparator and size fields of the TMap are already set prior to calling this
    * method. (It ignores both fields.)
-   * 
-   * @param level
-   *          the current level of tree. Initial call should be 0.
-   * @param lo
-   *          the first element index of this subtree. Initial should be 0.
-   * @param hi
-   *          the last element index of this subtree. Initial should be size-1.
+   *
+   * @param level the current level of tree. Initial call should be 0.
+   * @param lo the first element index of this subtree. Initial should be 0.
+   * @param hi the last element index of this subtree. Initial should be size-1.
    * @param redLevel
    *          the level at which nodes should be red. Must be equal to computeRedLevel for tree of
    *          this size.
@@ -2474,14 +2428,16 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
      * ensuring that items are extracted in corresponding order.
      */
 
-    if (hi < lo)
+    if (hi < lo) {
       return null;
+    }
 
     int mid = (lo + hi) / 2;
 
     Entry<K> left = null;
-    if (lo < mid)
+    if (lo < mid) {
       left = buildFromSorted(level + 1, lo, mid - 1, redLevel, it, str, defaultVal);
+    }
 
     // extract key and/or value from iterator or stream
     K key;
@@ -2523,8 +2479,9 @@ public class TMapKI<K> extends AbstractMapKI<K> implements NavigableMapKI<K>, Cl
    */
   private static int computeRedLevel(int sz) {
     int level = 0;
-    for (int m = sz - 1; m >= 0; m = m / 2 - 1)
+    for (int m = sz - 1; m >= 0; m = m / 2 - 1) {
       level++;
+    }
     return level;
   }
 }

@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Hash-based implementation of {@link MapIF}.
  */
-public class HMapIF implements MapIF, Cloneable, Serializable {
+public class HMapIF extends AbstractMapIF implements MapIF, Cloneable, Serializable {
 
 	/**
 	 * The default initial capacity - MUST be a power of two.

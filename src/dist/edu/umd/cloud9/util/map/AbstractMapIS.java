@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * <p>
- * This class provides a skeletal implementation of the <tt>MapII</tt> interface, to minimize the
+ * This class provides a skeletal implementation of the <tt>MapIS</tt> interface, to minimize the
  * effort required to implement this interface.
  * </p>
  *
@@ -35,11 +35,11 @@ import java.util.Set;
  * recommendation in the <tt>MapII</tt> interface specification.
  * </p>
  */
-public abstract class AbstractMapII implements MapII {
+public abstract class AbstractMapIS implements MapIS {
   /**
    * Sole constructor. (For invocation by subclass constructors, typically implicit.)
    */
-  protected AbstractMapII() {}
+  protected AbstractMapIS() {}
 
   // Query Operations
 
@@ -54,7 +54,7 @@ public abstract class AbstractMapII implements MapII {
   }
 
   @Override
-  public boolean containsValue(int value) {
+  public boolean containsValue(short value) {
     Iterator<Entry> i = entrySet().iterator();
     while (i.hasNext()) {
       Entry e = i.next();
@@ -78,7 +78,7 @@ public abstract class AbstractMapII implements MapII {
   }
 
   @Override
-  public int get(int key) {
+  public short get(int key) {
     Iterator<Entry> i = entrySet().iterator();
     while (i.hasNext()) {
       Entry e = i.next();
@@ -92,12 +92,12 @@ public abstract class AbstractMapII implements MapII {
   // Modification Operations
 
   @Override
-  public int put(int key, int value) {
+  public short put(int key, short value) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int remove(int key) {
+  public short remove(int key) {
     Iterator<Entry> i = entrySet().iterator();
     Entry correctEntry = null;
     while (correctEntry == null && i.hasNext()) {
@@ -107,7 +107,7 @@ public abstract class AbstractMapII implements MapII {
       }
     }
 
-    int oldValue = DEFAULT_VALUE;
+    short oldValue = DEFAULT_VALUE;
     if (correctEntry != null) {
       oldValue = correctEntry.getValue();
       i.remove();
@@ -118,10 +118,9 @@ public abstract class AbstractMapII implements MapII {
   // Bulk Operations
 
   @Override
-  public void putAll(MapII m) {
-    for (MapII.Entry e : m.entrySet()) {
+  public void putAll(MapIS m) {
+    for (MapIS.Entry e : m.entrySet())
       put(e.getKey(), e.getValue());
-    }
   }
 
   @Override
@@ -137,7 +136,7 @@ public abstract class AbstractMapII implements MapII {
    * one of each.
    */
   transient volatile Set<Integer> keySet = null;
-  transient volatile Collection<Integer> values = null;
+  transient volatile Collection<Short> values = null;
 
   @Override
   public Set<Integer> keySet() {
@@ -162,11 +161,11 @@ public abstract class AbstractMapII implements MapII {
         }
 
         public int size() {
-          return AbstractMapII.this.size();
+          return AbstractMapIS.this.size();
         }
 
         public boolean contains(Object k) {
-          return AbstractMapII.this.containsKey((Integer) k);
+          return AbstractMapIS.this.containsKey((Integer) k);
         }
       };
     }
@@ -174,18 +173,18 @@ public abstract class AbstractMapII implements MapII {
   }
 
   @Override
-  public Collection<Integer> values() {
+  public Collection<Short> values() {
     if (values == null) {
-      values = new AbstractCollection<Integer>() {
-        public Iterator<Integer> iterator() {
-          return new Iterator<Integer>() {
+      values = new AbstractCollection<Short>() {
+        public Iterator<Short> iterator() {
+          return new Iterator<Short>() {
             private Iterator<Entry> i = entrySet().iterator();
 
             public boolean hasNext() {
               return i.hasNext();
             }
 
-            public Integer next() {
+            public Short next() {
               return i.next().getValue();
             }
 
@@ -196,11 +195,11 @@ public abstract class AbstractMapII implements MapII {
         }
 
         public int size() {
-          return AbstractMapII.this.size();
+          return AbstractMapIS.this.size();
         }
 
         public boolean contains(Object v) {
-          return AbstractMapII.this.containsValue((Integer) v);
+          return AbstractMapIS.this.containsValue((Short) v);
         }
       };
     }
@@ -230,7 +229,7 @@ public abstract class AbstractMapII implements MapII {
       while (i.hasNext()) {
         Entry e = i.next();
         int key = e.getKey();
-        int value = e.getValue();
+        float value = e.getValue();
         if (value != m.get(key)) {
           return false;
         }
@@ -266,7 +265,7 @@ public abstract class AbstractMapII implements MapII {
     for (;;) {
       Entry e = i.next();
       int key = e.getKey();
-      int value = e.getValue();
+      float value = e.getValue();
       sb.append(key);
       sb.append('=');
       sb.append(value);
@@ -295,12 +294,12 @@ public abstract class AbstractMapII implements MapII {
    * <tt>entrySet().toArray</tt>.
    */
   public static class SimpleEntry implements Entry, Serializable {
-    private static final long serialVersionUID = 1680750790342608509L;
+    private static final long serialVersionUID = 6631985480543459151L;
 
     private final int key;
-    private int value;
+    private short value;
 
-    public SimpleEntry(int key, int value) {
+    public SimpleEntry(int key, short value) {
       this.key = key;
       this.value = value;
     }
@@ -316,20 +315,20 @@ public abstract class AbstractMapII implements MapII {
     }
 
     @Override
-    public int getValue() {
+    public short getValue() {
       return value;
     }
 
     @Override
-    public int setValue(int value) {
-      int oldValue = this.value;
+    public short setValue(short value) {
+      short oldValue = this.value;
       this.value = value;
       return oldValue;
     }
 
     @Override
     public boolean equals(Object o) {
-      if (!(o instanceof MapII.Entry)) {
+      if (!(o instanceof MapIF.Entry)) {
         return false;
       }
       Entry e = (Entry) o;
@@ -338,7 +337,7 @@ public abstract class AbstractMapII implements MapII {
 
     @Override
     public int hashCode() {
-      return key ^ value;
+      return key ^ (int) value;
     }
 
     @Override
@@ -353,12 +352,12 @@ public abstract class AbstractMapII implements MapII {
    * key-value mappings.
    */
   public static class SimpleImmutableEntry implements Entry, Serializable {
-    private static final long serialVersionUID = -1957562250413419998L;
+    private static final long serialVersionUID = -3111139474694374483L;
 
     private final int key;
-    private final int value;
+    private final short value;
 
-    public SimpleImmutableEntry(int key, int value) {
+    public SimpleImmutableEntry(int key, short value) {
       this.key = key;
       this.value = value;
     }
@@ -374,18 +373,18 @@ public abstract class AbstractMapII implements MapII {
     }
 
     @Override
-    public int getValue() {
+    public short getValue() {
       return value;
     }
 
     @Override
-    public int setValue(int value) {
+    public short setValue(short value) {
       throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean equals(Object o) {
-      if (!(o instanceof MapII.Entry)) {
+      if (!(o instanceof MapIS.Entry)) {
         return false;
       }
       Entry e = (Entry) o;
@@ -394,7 +393,7 @@ public abstract class AbstractMapII implements MapII {
 
     @Override
     public int hashCode() {
-      return key ^ value;
+      return key ^ (int) value;
     }
 
     @Override

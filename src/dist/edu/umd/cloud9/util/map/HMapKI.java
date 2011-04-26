@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import edu.umd.cloud9.util.map.HMapKF.Entry;
-
 /**
  * Hash-based implementation of the <tt>MapKI</tt> interface. {@link MapKI} is
  * a specialized variant the standard Java {@link Map} interface, except that
@@ -35,7 +33,7 @@ import edu.umd.cloud9.util.map.HMapKF.Entry;
  *            the type of keys maintained by this map
  */
 
-public class HMapKI<K extends Comparable<?>> implements MapKI<K>, Cloneable, Serializable {
+public class HMapKI<K extends Comparable<?>> extends AbstractMapKI<K> implements MapKI<K>, Cloneable, Serializable {
 
 	/**
 	 * The default initial capacity - MUST be a power of two.

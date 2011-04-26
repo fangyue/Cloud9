@@ -33,7 +33,7 @@ import java.util.Set;
  *            the type of keys maintained by this map
  */
 
-public class HMapKF<K extends Comparable<?>> implements MapKF<K>, Cloneable, Serializable {
+public class HMapKF<K extends Comparable<?>> extends AbstractMapKF<K> implements MapKF<K>, Cloneable, Serializable {
 
 	/**
 	 * The default initial capacity - MUST be a power of two.
